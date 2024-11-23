@@ -1,7 +1,6 @@
 import socket
 import time
 import os
-import tqdm
 import sys
 
 def send_file(file_path, host='175.27.170.205', port=80):
@@ -19,18 +18,17 @@ def send_file(file_path, host='175.27.170.205', port=80):
     start_time = time.time()
 
     with open(file_path, 'rb') as f:
-        progress = tqdm.tqdm(total=file_size, unit='B', unit_scale=True, desc="Sending")
-        while True:
-            bytes_read = f.read(4096)
+        bytes_sent = 0
+        while bytes_sent < file_size:
+            bytes_read = f.read(10 * 1024 * 1024) 
             if not bytes_read:
                 break
             client_socket.sendall(bytes_read)
-            progress.update(len(bytes_read))
-        progress.close()
+            bytes_sent += len(bytes_read)
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    avg_speed = (file_size * 8 / elapsed_time) / (1024 * 1024)
+    avg_speed = (file_size * 8 / elapsed_time) / (1024 * 1024) 
 
     print("[+] File sent successfully.")
     print("[*] Time taken: {:.2f} seconds".format(elapsed_time))
@@ -45,6 +43,7 @@ if __name__ == "__main__":
 
     file_path = sys.argv[1]
     send_file(file_path)
+
 
 
 
