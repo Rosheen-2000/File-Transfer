@@ -2,12 +2,13 @@ import socket
 import time
 import os
 import tqdm
+import sys
 
 def send_file(file_path, host='175.27.170.205', port=80):
     if not os.path.isfile(file_path):
         print("[-] File {} not found.".format(file_path))
         return
-    
+
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((host, port))
     print("[+] Connected to server {}:{}".format(host, port))
@@ -29,7 +30,7 @@ def send_file(file_path, host='175.27.170.205', port=80):
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    avg_speed = (file_size * 8 / elapsed_time) / (1024 * 1024) 
+    avg_speed = (file_size * 8 / elapsed_time) / (1024 * 1024)
 
     print("[+] File sent successfully.")
     print("[*] Time taken: {:.2f} seconds".format(elapsed_time))
@@ -38,6 +39,12 @@ def send_file(file_path, host='175.27.170.205', port=80):
     client_socket.close()
 
 if __name__ == "__main__":
-    send_file('Digits_Train.txt')
+    if len(sys.argv) != 2:
+        print("Usage: python sender.py <file_path>")
+        sys.exit(1)
+
+    file_path = sys.argv[1]
+    send_file(file_path)
+
 
 
